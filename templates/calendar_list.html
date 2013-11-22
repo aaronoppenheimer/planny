@@ -1,7 +1,61 @@
 {% extends 'planbase.html' %}
 
 {% block content %}
-    {% for c in the_calendar_list %}
-        <a href="/event_list.html?calid={{c['id']}}">{{ c['summary'] }}</a><br>
-    {% endfor %}
+
+    Events for: <select class="form-control" name="cal_select" onchange="updateEvents(0);" id="selectedCal">
+        {% for c in the_calendar_list %}
+            <option value="{{c['id']}}">
+                {{ c['summary'] }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <br>
+    <button onclick="updateEvents(-1)">last month</button>
+    <button onclick="updateEvents(1)">next month</button>
+<!--                 <a href="/event_list.html?calid={[c['id']]}">{[ c['summary'] ]}</a><br> -->
+    <br><br>
+    <div id="eventlist">
+    </div>
+
 {% endblock content %}
+
+
+{% block localscripts %}
+<script>
+
+var curDelta=0.0;
+
+function updateEvents(delta) {
+
+    curDelta = curDelta+delta;
+
+    document.getElementById('eventlist').innerHTML = "loading...";    
+
+    var item=document.getElementById('selectedCal')
+    var cal=item.options[item.selectedIndex].value;
+
+    var m='{{the_month}}';
+    var y='{{the_year}}';
+    var d=String(curDelta);
+    $.post('/calendar_events',
+            {
+                m: m,
+                y: y,
+                d: d,
+                c: cal
+            },
+            function(responseTxt,statusTxt,xhr){
+                if(statusTxt=="success")
+                    document.getElementById('eventlist').innerHTML = responseTxt;
+                if(statusTxt=="error")
+                    alert("Error: "+xhr.status+": "+xhr.statusTxt);
+            });
+}
+
+$(document).ready(function() {
+    updateEvents(0);
+});
+
+</script>
+{% endblock localscripts %}

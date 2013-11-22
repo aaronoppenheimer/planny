@@ -1,22 +1,15 @@
-{% extends 'planbase.html' %}
+{{ the_month_string }}
+<br><br>
 
-{% block content %}
-    Events for {{ the_calendar['summary'] }}:<br>
-    {{ the_month_string }}
-    <a href="/event_list.html?calid={{the_calendar['id']}}&m={{the_month}}&y={{the_year}}&d=-1">prev</a>
-    <a href="/event_list.html?calid={{the_calendar['id']}}&m={{the_month}}&y={{the_year}}&d=1">next</a>
-    <br><br>
-
-    {% for e in the_event_list %}
-        {% if 'summary' in e %}
-            {% if e['start'].date %}
-                {{ e['start'].date }} 
-            {% else %}
-                {{ e['start'].dateTime }} 
-            {% endif %}
-            - {{ e['summary'] }}
+{% for e in the_event_list %}
+    {% if 'summary' in e %}
+        {% if e['start'].date %}
+            {{ e['start'].date }} 
         {% else %}
-            (no summary)
-        {% endif %}<br>
-    {% endfor %}
-{% endblock content %}
+            {{ e['start'].dateTime }} 
+        {% endif %}
+        - {{ e['summary'] }}
+    {% else %}
+        (no summary)
+    {% endif %}<br>
+{% endfor %}
