@@ -1,0 +1,7 @@
+{% extends 'planbase.html' %}
+
+{% block content %}
+    {% for c in the_calendar_list %}
+        <a href="/event_list.html?calid={{c['id']}}">{{ c['summary'] }}</a><br>
+    {% endfor %}
+{% endblock content %}

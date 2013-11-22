@@ -1,0 +1,12 @@
+{% extends 'planbase.html' %}
+
+{% block content %}
+    Events for {{ the_calendar['summary'] }}:<br><br>
+    {% for e in the_event_list %}
+        {% if 'summary' in e %}
+            {{ e['summary'] }}
+        {% else %}
+            (no summary)
+        {% endif %}<br>
+    {% endfor %}
+{% endblock content %}
