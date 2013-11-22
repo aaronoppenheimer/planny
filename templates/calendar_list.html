@@ -4,7 +4,11 @@
 
     Events for: <select class="form-control" name="cal_select" onchange="updateEvents(0);" id="selectedCal">
         {% for c in the_calendar_list %}
-            <option value="{{c['id']}}">
+            <option value="{{c['id']}}"
+                {% if c['id'] == the_calendar %}
+                    SELECTED
+                {% endif %}
+            >
                 {{ c['summary'] }}
             </option>
         {% endfor %}

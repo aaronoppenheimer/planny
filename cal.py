@@ -17,9 +17,16 @@ class CalListHandler(BaseHandler):
     @decorator.oauth_required
     def get(self):
         the_calendar_list = get_calendar_list()
+
+        the_cal_id = the_calendar_list[0]['id']
+        for c in the_calendar_list:
+            if 'primary' in c and c['primary']:
+                the_cal_id = c['id']
+
         template_args = {
             'title' : "Calendar List",
             'the_calendar_list' : the_calendar_list,
+            'the_calendar': the_cal_id
         }
         self.render_template('calendar_list.html', template_args)
 
@@ -32,6 +39,9 @@ class EventListHandler(BaseHandler):
         if the_cal_id is None:
             the_calendar_list = get_calendar_list()
             the_cal_id = the_calendar_list[0]['id']
+            for c in the_calendar_list:
+                if c['primary']:
+                    the_cal_id = c['id']
 
         month_str=self.request.get("m",'')
         year_str=self.request.get("y",'')
