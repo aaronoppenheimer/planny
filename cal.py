@@ -48,15 +48,18 @@ class EventListHandler(BaseHandler):
                 month=12
                 year = year-1
             start_date = datetime.datetime(year=year, month=month, day=1)
-            month=month+1
-            if month>12:
-                month = 1
-                year = year+1
-            if month<1:
-                month=12
-                year = year-1
-            end_date = datetime.datetime(year=year, month=month, day=1)
                         
+        month = start_date.month
+        year = start_date.year
+        month=month+1
+        if month>12:
+            month = 1
+            year = year+1
+        if month<1:
+            month=12
+            year = year-1
+        end_date = datetime.datetime(year=year, month=month, day=1)
+
         iso_start_date= start_date.strftime("%Y-%m-%dT%H:%M:%S-05:00")
         iso_end_date= end_date.strftime("%Y-%m-%dT%H:%M:%S-05:00")
         
