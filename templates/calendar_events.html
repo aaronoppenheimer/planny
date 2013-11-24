@@ -1,6 +1,14 @@
 {{ the_month_string }}
 <br><br>
 
+<b>plan groups:</b><br>
+{% for pg in the_plangroup_list %}
+    {{ pg.name }} <a href="delete_group?gid={{pg.key.urlsafe()}}"><i>delete</i></a><br>
+{% endfor %}
+<br>
+<form action="add_group" method="post">new group:<input type="text" name="new_group_name"><input type="submit" value="go"></form>
+<br><br>
+<b>events:</b><br>
 {% for e in the_event_list %}
     {% if 'summary' in e %}
         {% if e['start'].date %}

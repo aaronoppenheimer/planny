@@ -1,6 +1,7 @@
 {% extends 'planbase.html' %}
 
 {% block content %}
+    user is {{ the_user }}<br><br>
 
     Events for: <select class="form-control" name="cal_select" onchange="updateEvents(0);" id="selectedCal">
         {% for c in the_calendar_list %}

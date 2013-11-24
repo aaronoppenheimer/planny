@@ -1,5 +1,28 @@
-from requestmodel import *
-import datetime
+#
+# Functions for getting calendars and events from Google Calendar
+#
+# AO 23 November 2013
+
+import os
+from apiclient import discovery
+from oauth2client import appengine
+from oauth2client import client
+from google.appengine.api import memcache
+import httplib2
+
+CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), 'client_secrets.json')
+
+http = httplib2.Http(memcache)
+service = discovery.build('calendar', 'v3', http=http)
+
+decorator = appengine.oauth2decorator_from_clientsecrets(
+    CLIENT_SECRETS,
+    scope=[
+      'https://www.googleapis.com/auth/calendar',
+      'https://www.googleapis.com/auth/calendar.readonly',
+    ],
+    message='uh oh')
+
 
 def get_calendar_list():
     calendarList = service.calendarList().list().execute(http=decorator.http())
@@ -12,86 +35,3 @@ def get_calendar_from_calendar_id(the_calendar_id):
 def get_events_from_calendar_id(the_calendar_id, the_start_date=None, the_end_date=None):
     eventList = service.events().list(calendarId=the_calendar_id, timeMin=the_start_date, timeMax=the_end_date).execute(http=decorator.http())
     return eventList
-
-class CalListHandler(BaseHandler):
-    @decorator.oauth_required
-    def get(self):
-        the_calendar_list = get_calendar_list()
-
-        the_cal_id = the_calendar_list[0]['id']
-        for c in the_calendar_list:
-            if 'primary' in c and c['primary']:
-                the_cal_id = c['id']
-
-        template_args = {
-            'title' : "Calendar List",
-            'the_calendar_list' : the_calendar_list,
-            'the_calendar': the_cal_id
-        }
-        self.render_template('calendar_list.html', template_args)
-
-class EventListHandler(BaseHandler):
-
-    @decorator.oauth_required
-    def post(self):
-        
-        the_cal_id = self.request.get("c",None)
-        if the_cal_id is None:
-            the_calendar_list = get_calendar_list()
-            the_cal_id = the_calendar_list[0]['id']
-            for c in the_calendar_list:
-                if c['primary']:
-                    the_cal_id = c['id']
-
-        month_str=self.request.get("m",'')
-        year_str=self.request.get("y",'')
-        if month_str=='' or year_str=='':
-            month_str = datetime.datetime.now().month
-            year_str = datetime.datetime.now().year
-
-        delta_str=self.request.get("d",'0')
-
-        logging.error("\n\ndata is {0} {1} {2}\n\n".format(month_str, year_str, delta_str))
-        
-        delta=int(delta_str)
-        year=int(year_str)
-        month=int(month_str)
-        month=month+delta
-
-        while month > 12:
-            month = month-12
-            year = year+1
-
-        while month < 1:
-            month=month+12
-            year = year-1
-
-        start_date = datetime.datetime(year=year, month=month, day=1)
-                        
-        month = start_date.month
-        year = start_date.year
-        month=month+1
-        if month>12:
-            month = 1
-            year = year+1
-        if month<1:
-            month=12
-            year = year-1
-        end_date = datetime.datetime(year=year, month=month, day=1)
-
-        iso_start_date= start_date.strftime("%Y-%m-%dT%H:%M:%S-05:00")
-        iso_end_date= end_date.strftime("%Y-%m-%dT%H:%M:%S-05:00")
-                
-        the_calendar = get_calendar_from_calendar_id(the_cal_id)
-        the_event_list = get_events_from_calendar_id(the_cal_id,
-                                                     the_start_date = iso_start_date, 
-                                                     the_end_date = iso_end_date)
-        
-        template_args = {
-            'the_calendar' : the_calendar,
-            'the_event_list' : the_event_list['items'],
-            'the_month_string' : start_date.strftime("%b, %Y"),
-            'the_month' : start_date.month,
-            'the_year' : start_date.year,
-        }
-        self.render_template('calendar_events.html', template_args)

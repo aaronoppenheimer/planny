@@ -6,12 +6,15 @@
 
 import webapp2
 import cal
+import pagehandlers
 
 app = webapp2.WSGIApplication(
     [
-     ('/', cal.CalListHandler),
+     ('/', pagehandlers.CalListHandler),
      (cal.decorator.callback_path, cal.decorator.callback_handler()),
-     ('/calendar_list.html', cal.CalListHandler, 'cal_list'),
-     ('/calendar_events', cal.EventListHandler, 'event_list')
+     ('/calendar_list.html', pagehandlers.CalListHandler, 'cal_list'),
+     ('/calendar_events', pagehandlers.EventListHandler, 'event_list'),
+     ('/add_group', pagehandlers.NewGroupHandler),
+     ('/delete_group', pagehandlers.DeleteGroupHandler)
     ],
     debug=True)
