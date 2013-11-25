@@ -15,6 +15,8 @@ app = webapp2.WSGIApplication(
      ('/calendar_list.html', pagehandlers.CalListHandler, 'cal_list'),
      ('/calendar_events', pagehandlers.EventListHandler, 'event_list'),
      ('/add_group', pagehandlers.NewGroupHandler),
-     ('/delete_group', pagehandlers.DeleteGroupHandler)
+     ('/delete_group', pagehandlers.DeleteGroupHandler),
+     ('/add_event_to_group', pagehandlers.AddEventToGroupHandler),
+     ('/remove_event_from_group', pagehandlers.RemoveEventFromGroupHandler)
     ],
     debug=True)

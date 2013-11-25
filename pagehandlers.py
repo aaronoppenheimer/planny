@@ -69,21 +69,23 @@ class EventListHandler(BaseHandler):
             month=12
             year = year-1
         end_date = datetime.datetime(year=year, month=month, day=1)
-
-        iso_start_date= start_date.strftime("%Y-%m-%dT%H:%M:%S-05:00")
-        iso_end_date= end_date.strftime("%Y-%m-%dT%H:%M:%S-05:00")
                 
         the_calendar = cal.get_calendar_from_calendar_id(the_cal_id)
         the_event_list = cal.get_events_from_calendar_id(the_cal_id,
-                                                     the_start_date = iso_start_date, 
-                                                     the_end_date = iso_end_date)
+                                                     the_start_date = start_date, 
+                                                     the_end_date = end_date)
 
         the_plangroup_list = plangroup.get_all_plangroups_for_user(keys_only=False)
+        
+        the_sorted_events = cal.get_events_by_plangroup_for_user(the_cal_id,
+                                                                 the_start_date = start_date,
+                                                                 the_end_date = end_date)
         
         template_args = {
             'the_calendar' : the_calendar,
             'the_plangroup_list' : the_plangroup_list,
             'the_event_list' : the_event_list['items'],
+            'the_sorted_events' : the_sorted_events,
             'the_month_string' : start_date.strftime("%b, %Y"),
             'the_month' : start_date.month,
             'the_year' : start_date.year,
@@ -110,4 +112,33 @@ class DeleteGroupHandler(BaseHandler):
             
         the_group_key = ndb.Key(urlsafe=the_group_keyurl)
         plangroup.forget_plangroup_from_key(the_group_key)
-        return self.redirect('/')        
+        return self.redirect('/')
+        
+class AddEventToGroupHandler(BaseHandler):
+    @cal.decorator.oauth_required
+    def post(self):
+        the_event_id = self.request.get('event_id','')
+        the_group_keyurl = self.request.get('group_select','')
+        
+        if the_event_id == '' or the_group_keyurl == '':
+            return # todo what to do?
+        
+        the_plangroup_key = ndb.Key(urlsafe = the_group_keyurl)
+        plangroup.add_event_to_plangroup_by_key(the_event_id=the_event_id, the_plangroup_key=the_plangroup_key)
+        
+        return self.redirect('/')
+        
+class RemoveEventFromGroupHandler(BaseHandler):
+    @cal.decorator.oauth_required
+    def get(self):
+    
+        the_event_id = self.request.get('e','')
+        the_group_keyurl = self.request.get('g','')
+
+        if the_event_id == '' or the_group_keyurl == '':
+            return # todo what to do?
+
+        the_plangroup_key = ndb.Key(urlsafe = the_group_keyurl)
+        plangroup.remove_event_from_plangroup_by_key(the_event_id=the_event_id, the_plangroup_key=the_plangroup_key)
+        
+        return self.redirect('/')

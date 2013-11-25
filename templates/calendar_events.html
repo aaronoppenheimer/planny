@@ -1,14 +1,14 @@
 {{ the_month_string }}
 <br><br>
 
-<b>plan groups:</b><br>
+<b>Manage Plan Groups:</b><br>
 {% for pg in the_plangroup_list %}
     {{ pg.name }} <a href="delete_group?gid={{pg.key.urlsafe()}}"><i>delete</i></a><br>
 {% endfor %}
 <br>
 <form action="add_group" method="post">new group:<input type="text" name="new_group_name"><input type="submit" value="go"></form>
 <br><br>
-<b>events:</b><br>
+<b>Manage Events:</b><br>
 {% for e in the_event_list %}
     {% if 'summary' in e %}
         {% if e['start'].date %}
@@ -19,5 +19,45 @@
         - {{ e['summary'] }}
     {% else %}
         (no summary)
-    {% endif %}<br>
+    {% endif %}
+    <form action="add_event_to_group" method="post">
+        add to group:
+        <input type="hidden" name="event_id" value="{{e['id']}}">
+        <select class="form-control" name="group_select"">
+            {% for pg in the_plangroup_list %}
+                <option value="{{pg.key.urlsafe()}}">
+                    {{ pg.name }}
+                </option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="go">
+    </form>
+    <br>
+{% endfor %}
+<br><br>
+<b>sorted events:</b><br>
+{% for pg in the_sorted_events.keys() %}
+    {% set group_info = the_sorted_events[pg] %}
+    {% if group_info[0] %}
+        {{ group_info[0].name }}:<br>
+    {% else %}
+        Not in any group:<br>
+    {% endif %}
+    {% for e in group_info[1] %}
+        {% if 'summary' in e %}
+            {% if e['start'].date %}
+                {{ e['start'].date }} 
+            {% else %}
+                {{ e['start'].dateTime }} 
+            {% endif %}
+            - {{ e['summary'] }}
+        {% else %}
+            (no summary)
+        {% endif %}
+        {% if group_info[0] %}
+            <a href="remove_event_from_group?e={{e['id']}}&g={{group_info[0].key.urlsafe()}}">remove</a>
+        {% endif %}
+        <br>
+    {% endfor %}
+    <br><br>
 {% endfor %}
