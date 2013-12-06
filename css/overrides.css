@@ -1,0 +1,89 @@
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td { padding:0; vertical-align:middle; border-top:0;}
+
+table {border-spacing:0;}
+.table {margin-bottom: 0; table-layout:fixed;}
+.table .table {background-color:transparent;}
+
+.table .table {width: 35px;}
+.table .table td {width: 5px;}
+.table-bordered > tbody > tr > td { border: 1px dotted #dddddd; }
+
+.tableheader { border:0;}
+
+* {overflow: visible; font-size:13px;}
+
+.month {
+	border:1px solid black;
+	color:black;
+	background-color:#DDDDDD; 
+	margin:0px;
+	text-align:center;
+	line-height:1.8em;
+	border-right:0;
+	font-size:1.1em;
+}
+
+.event {
+	position:relative;
+	border:1px solid #6BCFA2;
+	color:#777777;
+	background-color:#D1EDE0;
+	margin:0px; 
+	padding-left: 5px;
+	cursor: pointer;
+}
+
+.cal-container {
+	width: 1050px;
+	position: absolute;
+	top: 0;
+	right:0;
+	height: 470px;
+}
+
+.cal-list {
+	position: absolute;
+	top: 0;
+	left:30px;
+}
+
+.row-cal {
+	position: absolute; 
+	left:0px; 
+	width:100%; 
+	overflow:hidden; 
+	height:22px;
+	border-bottom: 1px dotted #ddd;
+	border-right: 1px dotted #ddd;
+}
+
+.table-bg {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	table-layout: fixed;
+}
+
+.table-fg {
+	position: relative;
+	table-layout: fixed;
+	width: 100%;
+}
+
+.st-bg {
+	border-left: 1px dotted #ddd;
+}
+
+.months-cal {
+	width:100%;
+	table-layout: fixed;
+}
+
+.rowtitle {
+	height:22px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

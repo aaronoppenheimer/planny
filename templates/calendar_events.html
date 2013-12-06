@@ -12,7 +12,7 @@
 {% for e in the_event_list %}
     {% if 'summary' in e %}
         {% if e['start'].date %}
-            {{ e['start'].date }} 
+            {{ e['start'].date }}: in {{ e['from_start'] }} from start and lasting {{ e['duration'] }} days
         {% else %}
             {{ e['start'].dateTime }} 
         {% endif %}
@@ -46,7 +46,6 @@
     {% for e in group_info[1] %}
         {% if 'summary' in e %}
             {% if e['start'].date %}
-                {{ e['start'].date }} 
             {% else %}
                 {{ e['start'].dateTime }} 
             {% endif %}

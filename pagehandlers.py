@@ -80,18 +80,58 @@ class EventListHandler(BaseHandler):
         the_sorted_events = cal.get_events_by_plangroup_for_user(the_cal_id,
                                                                  the_start_date = start_date,
                                                                  the_end_date = end_date)
+        # --- BEGIN VICTOR CODE ---                                                         
+        the_event_list_allday=[]
+        today = datetime.datetime.today()
+    	display_start = datetime.datetime.fromordinal(today.toordinal() - today.weekday() - 21)
+        for e in the_event_list['items']:
+        	if 'start' in e and 'date' in e['start']:
+        		timedelta = datetime.datetime.strptime((e['end'].get('date')),'%Y-%m-%d') - \
+        					datetime.datetime.strptime((e['start'].get('date')),'%Y-%m-%d')
+        		e['duration'] = timedelta.days
+        		timedelta = datetime.datetime.strptime((e['start'].get('date')),'%Y-%m-%d') - \
+        		            display_start
+        		e['from_start'] = timedelta.days
+        		if e['from_start'] < 0:
+        		    e['duration'] = e['duration'] + e['from_start']
+        		    e['from_start'] = 0
+        		the_event_list_allday.append(e)	
+
+        today = datetime.date.today()
+    	display_start = datetime.date.fromordinal(today.toordinal() - today.weekday() - 21)
+    	display_end   = datetime.date.fromordinal(display_start.toordinal() + 24 * 7)
+
+        display_months=[]
+        date_i = display_start
+        while date_i < display_end:
+		    month = date_i.month + 1
+		    year = date_i.year 
+		    if month > 12:
+		        month = 1
+		        year = year + 1
+		    month_end = datetime.date.fromordinal(datetime.date(year, month, 1).toordinal() - 1).day
+		    my_month = {
+		        'name': date_i.strftime('%B'),
+		        'days': month_end - date_i.day + 1
+		    }
+		    display_months.append(my_month)
+		    date_i = datetime.date(year, month, 1)
+        # --- END VICTOR CODE ----
         
         template_args = {
             'the_calendar' : the_calendar,
             'the_plangroup_list' : the_plangroup_list,
-            'the_event_list' : the_event_list['items'],
+#            'the_event_list' : the_event_list['items'],
+			'the_event_list': the_event_list_allday,
             'the_sorted_events' : the_sorted_events,
             'the_month_string' : start_date.strftime("%b, %Y"),
             'the_month' : start_date.month,
             'the_year' : start_date.year,
+            'display_months': display_months,    
         }
-        self.render_template('calendar_events.html', template_args)
-
+        #self.render_template('calendar_events.html', template_args)
+        self.render_template('calendar_timeline.html', template_args)
+        
 class NewGroupHandler(BaseHandler):
     @cal.decorator.oauth_required
     def post(self):
