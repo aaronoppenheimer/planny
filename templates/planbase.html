@@ -11,27 +11,22 @@
         <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
         <meta http-equiv="pragma" content="no-cache" />
         
-        <link href="css/bootstrap.css" rel="stylesheet">
-        <link href="css/grid.css" rel="stylesheet">
-        <link href="css/overrides.css" rel="stylesheet">
+         <link href="css/bootstrap.css" rel="stylesheet">
+         <link href="css/grid.css" rel="stylesheet">
+         <link href="css/overrides.css" rel="stylesheet">
 
     </head>
 
-    <body>
+    <body>    
         {% block content %}
         {% endblock content %}
     </body>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.js"></script>
     <script src="js/bootstrap.js"></script>
-    <script> 	   
-	!function ($) {
-		$(function(){
-			$('.popover-test').popover()
-			$("[data-toggle=popover]").popover()
-      	})
-	}(window.jQuery)
-	</script>
     {% block localscripts %}
     {% endblock localscripts %}
+    </script>
+
 </html>

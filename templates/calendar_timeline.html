@@ -1,61 +1,72 @@
 {{ the_month_string }}
-  <div style="position:relative;">
-  
-  <div class="cal-list" style="width:180px;">
-  	<div style="line-height:1.8em;font-size:1.1em; border:1px solid white;">&nbsp;</div>
-  	
-  	
-  	{% for e in the_event_list %}
-        <div class="rowtitle" >
-        {% if 'summary' in e %}
-    	    {{ e['summary'] }}
-        {% else %}
-            (no summary)
-        {% endif %}
-        </div>
-    {% endfor %}
-  	
-  </div>
-  
-  <div class="cal-container">
 
-  {% if not the_event_list %}
-  	<h2>No full-day or multiday events to display in this calendar for the selected timeframe.</h2>
-  {% endif %}
-  
-  <table class="table months-cal">
-  <tr>
-  	{% for month in display_months %}
-  	<td colspan="{{month.days}}"> <div class="month">{{month.name}}</div</td>
-  	{% endfor %}
-  </tr>
-  </table>
-  
-  <div style="position: absolute; left:0px; width:100%;">
-  {% for e in the_event_list %}
-  <div class="row-cal" style="top:{{ loop.index0*22 }}px">
-  	<table cellpadding="0" cellspacing="0" class="table-bg">
-  		<tr>
-  			{% for j in range(168) %}
-  				<td {{ 'class=st-bg' if not j%7 }}>&nbsp;</td>
-  			{% endfor %}	
+<div>
+  <ul style="list-style-type: none; margin: 0; padding: 0; width: 100%;padding-bottom:1px;">
+	<li style="padding-left: .5em; height:27px">
+	  <table style="width:100%">
+  	    <tr>
+  	      <td style="width:180px;">
+  	        <div class="rowtitle" >
+  	          &nbsp;	
+            </div>
+  	      </td>
+  	      <td>
+  	      	<div class="row-content" style="line-height:1.8em;">
+			  <table class="table months-cal">
+  				<tr>
+  				{% for month in display_months %}
+  				  <td colspan="{{month.days}}"> <div class="month">{{month.name}}</div</td>
+  				{% endfor %}
+  			  	</tr>
+  			  </table>
+  			</div>
+		  </td>
+		</tr>
+	  </table>
+	</li>
+  </ul>
+  <ul id="sortable">
+    {% for e in the_event_list %}
+  	<li class="ui-state-default" id="row-{{a}}">
+  	  <table style="width:100%">
+  	    <tr>
+  	      <td style="width:180px;">
+  	        <div class="row-title" >
+  	          <span class="sortable-handle"></span>
+  				{% if 'summary' in e %}
+    			  {{ e['summary'] }}
+    			{% else %}
+       			  (no summary)
+    			{% endif %}  	
+            </div>
+  	      </td>
+  	      <td>
+  			<div class="row-content">
+  			  <table cellpadding="0" cellspacing="0" class="table-bg">
+  				<tr>
+  				{% for j in range(168) %}
+  				  <td {{ 'class=st-bg' if not j%7 }}>&nbsp;</td>
+  				{% endfor %}	
+  				</tr>
+  			  </table>
+  			  <table cellpadding="0" cellspacing="0" class="table-fg">
+  				<tr>
+  				{% for j in range(168) %}
+  				  {% if j==e['from_start'] %}
+	  			  <td colspan="{{ e['duration'] }}">
+	  				<div class="event" data-toggle="popover" title="{{e['summary']}}" data-content="{{e['start'].get('date')}} - {{e['end'].get('date')}} ({{e['duration']}} days)<br/><br/><b>Calendar</b> {calendar name}" role="button" data-container="body" data-placement="bottom">&nbsp;</div>
+	  			  </td>
+				  {% else %}
+				  <td>&nbsp;</td>
+				  {% endif %}							
+  				{% endfor %}
+  				</tr>
+  			  </table>
+  			</div>
+  		  </td>
   		</tr>
-  	</table>
-  	<table cellpadding="0" cellspacing="0" class="table-fg">
-  		<tr>
-  			{% for j in range(168) %}
-  				{% if j==e['from_start'] %}
-	  				<td colspan="{{ e['duration'] }}">
-	  					<div class="event" data-toggle="popover" title="Vacation" data-content="Tue, March 30 - Tue, April 13" role="button" data-container="body" data-placement="bottom">&nbsp;</div>
-	  				</td>
-				{% else %}
-					<td>&nbsp;</td>
-				{% endif %}							
-  			{% endfor %}
-  		</tr>
-  	</table>
-  </div>
-  {% endfor %}
-  </div>
-  </div>
+  	  </table>
+  	</li>
+    {% endfor %}	  	
+  </ul> 
 </div>

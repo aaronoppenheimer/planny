@@ -51,8 +51,12 @@ function updateEvents(delta) {
                 c: cal
             },
             function(responseTxt,statusTxt,xhr){
-                if(statusTxt=="success")
+                if(statusTxt=="success") {
                     document.getElementById('eventlist').innerHTML = responseTxt;
+                    $( "#sortable" ).sortable({ handle: '.sortable-handle' });
+				  	$( "#sortable" ).disableSelection();
+					$("[data-toggle=popover]").popover({html: true});
+				}
                 if(statusTxt=="error")
                     alert("Error: "+xhr.status+": "+xhr.statusTxt);
             });
