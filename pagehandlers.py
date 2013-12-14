@@ -130,7 +130,7 @@ class EventListHandler(BaseHandler):
             'display_months': display_months,    
         }
         self.render_template('calendar_timeline.html', template_args)
-        #self.render_template('calendar_events.html', template_args)
+        self.render_template('calendar_events.html', template_args)
         
 class NewGroupHandler(BaseHandler):
     @cal.decorator.oauth_required
