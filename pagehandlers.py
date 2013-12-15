@@ -97,6 +97,25 @@ class EventListHandler(BaseHandler):
         		    e['from_start'] = 0
         		the_event_list_allday.append(e)	
 
+        the_sorted_events_allday={}
+        for pg in the_sorted_events.keys():
+            group_info = the_sorted_events[pg]
+            for e in group_info[1]:
+                if 'start' in e and 'date' in e['start']:
+        		    timedelta = datetime.datetime.strptime((e['end'].get('date')),'%Y-%m-%d') - \
+        			  		    datetime.datetime.strptime((e['start'].get('date')),'%Y-%m-%d')
+        		    e['duration'] = timedelta.days
+        		    timedelta = datetime.datetime.strptime((e['start'].get('date')),'%Y-%m-%d') - \
+        		                display_start
+        		    e['from_start'] = timedelta.days
+        		    if e['from_start'] < 0:
+        		        e['duration'] = e['duration'] + e['from_start']
+        		        e['from_start'] = 0
+        		    if pg in the_sorted_events_allday:
+        		        the_sorted_events_allday[pg][1].append(e)
+        		    else:
+        		        the_sorted_events_allday[pg] = (group_info[0],[e])
+        		        
         today = datetime.date.today()
     	display_start = datetime.date.fromordinal(today.toordinal() - today.weekday() - 21)
     	display_end   = datetime.date.fromordinal(display_start.toordinal() + 24 * 7)
@@ -123,7 +142,7 @@ class EventListHandler(BaseHandler):
             'the_plangroup_list' : the_plangroup_list,
 #            'the_event_list' : the_event_list['items'],
 			'the_event_list': the_event_list_allday,
-            'the_sorted_events' : the_sorted_events,
+            'the_sorted_events' : the_sorted_events_allday,
             'the_month_string' : start_date.strftime("%b, %Y"),
             'the_month' : start_date.month,
             'the_year' : start_date.year,
