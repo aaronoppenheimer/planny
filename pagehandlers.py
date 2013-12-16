@@ -28,7 +28,7 @@ class EventListHandler(BaseHandler):
     @cal.decorator.oauth_required
     def post(self):
         
-        the_cal_id = self.request.get("c",None)
+        the_cal_id = self.request.get("cal",None)
         if the_cal_id is None:
             the_calendar_list = cal.get_calendar_list()
             the_cal_id = the_calendar_list[0]['id']
