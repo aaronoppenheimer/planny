@@ -1,5 +1,6 @@
 from requestmodel import *
 import datetime
+import dateutil.parser
 import cal
 import plangroup
 
@@ -16,10 +17,16 @@ class CalListHandler(BaseHandler):
             if 'primary' in c and c['primary']:
                 the_cal_id = c['id']
 
+        # set up some initial date/view parameters
+        the_focus = datetime.datetime.today().toordinal()
+        the_weeks = 24
+
         template_args = {
             'title' : "Calendar List",
             'the_calendar_list' : the_calendar_list,
-            'the_calendar': the_cal_id
+            'the_calendar': the_cal_id,
+            'the_focus' : the_focus,
+            'the_weeks' : the_weeks
         }
         self.render_template('calendar_list.html', template_args)
 
@@ -36,50 +43,31 @@ class EventListHandler(BaseHandler):
                 if c['primary']:
                     the_cal_id = c['id']
 
-        month_str=self.request.get("m",'')
-        year_str=self.request.get("y",'')
-        if month_str=='' or year_str=='':
-            month_str = datetime.datetime.now().month
-            year_str = datetime.datetime.now().year
+        the_start_date_str = self.request.get("focus",None)
+        if the_start_date_str:
+            center_day = datetime.datetime.fromordinal(int(the_start_date_str))
+        else:
+            center_day = datetime.datetime.now()
 
-        delta_str=self.request.get("d",'0')
+        the_weeks_str = self.request.get("weeks",None)
+        if the_weeks_str:
+            the_weeks = int(the_weeks_str)
+        else:
+            the_weeks = 24
 
-        delta=int(delta_str)
-        year=int(year_str)
-        month=int(month_str)
-        month=month+delta
-
-        while month > 12:
-            month = month-12
-            year = year+1
-
-        while month < 1:
-            month=month+12
-            year = year-1
-
-        start_date = datetime.datetime(year=year, month=month, day=1)
-                        
-        month = start_date.month
-        year = start_date.year
-        month=month+1
-        if month>12:
-            month = 1
-            year = year+1
-        if month<1:
-            month=12
-            year = year-1
-        end_date = datetime.datetime(year=year, month=month, day=1)
+        the_start_date = datetime.datetime.fromordinal(center_day.toordinal() - center_day.weekday() - 21)
+        the_end_date = datetime.datetime.fromordinal(center_day.toordinal() - center_day.weekday() + (the_weeks * 7))
                 
         the_calendar = cal.get_calendar_from_calendar_id(the_cal_id)
         the_event_list = cal.get_events_from_calendar_id(the_cal_id,
-                                                     the_start_date = start_date, 
-                                                     the_end_date = end_date)
+                                                     the_start_date = the_start_date, 
+                                                     the_end_date = the_end_date)
 
         the_plangroup_list = plangroup.get_all_plangroups_for_user(keys_only=False)
         
         the_sorted_events = cal.get_events_by_plangroup_for_user(the_cal_id,
-                                                                 the_start_date = start_date,
-                                                                 the_end_date = end_date)
+                                                                 the_start_date = the_start_date,
+                                                                 the_end_date = the_end_date)
         # --- BEGIN VICTOR CODE ---                                                         
         the_event_list_allday=[]
         today = datetime.datetime.today()
@@ -143,9 +131,6 @@ class EventListHandler(BaseHandler):
 #            'the_event_list' : the_event_list['items'],
 			'the_event_list': the_event_list_allday,
             'the_sorted_events' : the_sorted_events_allday,
-            'the_month_string' : start_date.strftime("%b, %Y"),
-            'the_month' : start_date.month,
-            'the_year' : start_date.year,
             'display_months': display_months,    
         }
         self.render_template('calendar_timeline.html', template_args)

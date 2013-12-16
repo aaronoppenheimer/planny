@@ -29,25 +29,22 @@
 {% block localscripts %}
 <script>
 
-var curDelta=0.0;
+var curWeeks=parseInt({{the_weeks}});
+var curStart=parseInt({{the_focus}});
 
 function updateEvents(delta) {
 
-    curDelta = curDelta+delta;
-
     document.getElementById('spinnerspot').innerHTML = "<i class='fa fa-spinner fa-spin'></i>";    
+
+    curStart=curStart+(28*delta)
 
     var item=document.getElementById('selectedCal')
     var cal=item.options[item.selectedIndex].value;
 
-    var m='{{the_month}}';
-    var y='{{the_year}}';
-    var d=String(curDelta);
     $.post('/calendar_events',
             {
-                m: m,
-                y: y,
-                d: d,
+                focus: curStart,
+                weeks: curWeeks,
                 cal: cal
             },
             function(responseTxt,statusTxt,xhr){
