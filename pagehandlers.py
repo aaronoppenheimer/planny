@@ -1,6 +1,5 @@
 from requestmodel import *
 import datetime
-import dateutil.parser
 import cal
 import plangroup
 
@@ -70,8 +69,8 @@ class EventListHandler(BaseHandler):
                                                                  the_end_date = the_end_date)
         # --- BEGIN VICTOR CODE ---                                                         
         the_event_list_allday=[]
-        today = datetime.datetime.today()
-    	display_start = datetime.datetime.fromordinal(today.toordinal() - today.weekday() - 21)
+    	display_start = the_start_date
+    	display_end = the_end_date
         for e in the_event_list['items']:
         	if 'start' in e and 'date' in e['start']:
         		timedelta = datetime.datetime.strptime((e['end'].get('date')),'%Y-%m-%d') - \
@@ -104,10 +103,6 @@ class EventListHandler(BaseHandler):
         		    else:
         		        the_sorted_events_allday[pg] = (group_info[0],[e])
         		        
-        today = datetime.date.today()
-    	display_start = datetime.date.fromordinal(today.toordinal() - today.weekday() - 21)
-    	display_end   = datetime.date.fromordinal(display_start.toordinal() + 24 * 7)
-
         display_months=[]
         date_i = display_start
         while date_i < display_end:
@@ -116,13 +111,13 @@ class EventListHandler(BaseHandler):
 		    if month > 12:
 		        month = 1
 		        year = year + 1
-		    month_end = datetime.date.fromordinal(datetime.date(year, month, 1).toordinal() - 1).day
+		    month_end = datetime.datetime.fromordinal(datetime.datetime(year, month, 1).toordinal() - 1).day
 		    my_month = {
 		        'name': date_i.strftime('%B'),
 		        'days': month_end - date_i.day + 1
 		    }
 		    display_months.append(my_month)
-		    date_i = datetime.date(year, month, 1)
+		    date_i = datetime.datetime(year, month, 1)
         # --- END VICTOR CODE ----
         
         template_args = {
