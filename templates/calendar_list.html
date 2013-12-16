@@ -18,7 +18,7 @@
     <br>
     <button onclick="updateEvents(-1)">last month</button>
     <button onclick="updateEvents(1)">next month</button>
-<!--                 <a href="/event_list.html?calid={[c['id']]}">{[ c['summary'] ]}</a><br> -->
+    <span id="spinnerspot"></span>
     <br><br>
     <div id="eventlist">
     </div>
@@ -35,7 +35,7 @@ function updateEvents(delta) {
 
     curDelta = curDelta+delta;
 
-    document.getElementById('eventlist').innerHTML = "loading...";    
+    document.getElementById('spinnerspot').innerHTML = "<i class='fa fa-spinner fa-spin'></i>";    
 
     var item=document.getElementById('selectedCal')
     var cal=item.options[item.selectedIndex].value;
@@ -52,6 +52,7 @@ function updateEvents(delta) {
             },
             function(responseTxt,statusTxt,xhr){
                 if(statusTxt=="success") {
+                    document.getElementById('spinnerspot').innerHTML = "";    
                     document.getElementById('eventlist').innerHTML = responseTxt;
                     $( "#sortable" ).sortable({ handle: '.sortable-handle' });
 				  	$( "#sortable" ).disableSelection();
