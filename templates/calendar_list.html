@@ -17,6 +17,7 @@
 
     <br>
     <button onclick="updateEvents(-1)">last month</button>
+    <button onclick="resetEvents()">today</button>
     <button onclick="updateEvents(1)">next month</button>
     <span id="spinnerspot"></span>
     <br><br>
@@ -31,6 +32,15 @@
 
 var curWeeks=parseInt({{the_weeks}});
 var curStart=parseInt({{the_focus}});
+
+var origWeeks=curWeeks;
+var origStart=curStart;
+
+function resetEvents() {
+    curWeeks = origWeeks;
+    curStart = origStart;
+    updateEvents(0);
+}
 
 function updateEvents(delta) {
 
